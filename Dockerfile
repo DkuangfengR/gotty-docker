@@ -1,5 +1,5 @@
 # 使用官方的 Node.js 镜像作为基础镜像
-FROM node:16-alpine
+FROM node:18-alpine
 
 # 维护者信息
 LABEL maintainer="1721878937@qq.com"
