@@ -15,4 +15,4 @@ RUN curl -LO https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux
 EXPOSE 10000
 
 # 启动 Gotty
-CMD ["ls", "-al", "/usr/local/bin/"]
+CMD ["gotty", "-w", "-p", "10000"]
