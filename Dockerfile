@@ -24,4 +24,4 @@ USER user
 EXPOSE 8080
 
 # 启动 Gotty
-CMD ["ls", "-al", "/usr/local/bin", "&&", "gotty", "-w", "-p", "8080", "bash"]
+CMD ["ls", "-al", "/usr/local/bin", "bash"]
