@@ -1,47 +1,23 @@
-# 使用官方的 Ubuntu 镜像作为基础镜像
-FROM ubuntu:20.04
+# 使用官方的 Alpine Linux 镜像作为基础镜像
+FROM alpine:latest
 
-# 维护者信息
-LABEL maintainer="your-email@example.com"
+# 安装必要的软件包
+RUN apk add --no-cache bash curl
 
-# 环境变量设置
-ENV DEBIAN_FRONTEND=noninteractive
+# 安装 Gotty
+RUN curl -LO https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux_amd64.tar.gz && \
+    tar -xzf gotty_linux_amd64.tar.gz && \
+    mv gotty /usr/local/bin/ && \
+    rm gotty_linux_amd64.tar.gz
 
-# 更新包列表并安装必要的包
-RUN apt-get update && \
-    apt-get install -y \
-    xfce4 \
-    xfce4-goodies \
-    tightvncserver \
-    wget \
-    supervisor \
-    net-tools \
-    xterm \
-    sudo \
-    && apt-get clean
+# 创建一个新的用户
+RUN adduser -D -s /bin/bash user
 
-# 安装 noVNC
-RUN mkdir -p /opt/novnc/utils/websockify && \
-    wget -qO- https://github.com/novnc/noVNC/archive/v1.2.0.tar.gz | tar xz --strip 1 -C /opt/novnc && \
-    wget -qO- https://github.com/novnc/websockify/archive/v0.9.0.tar.gz | tar xz --strip 1 -C /opt/novnc/utils/websockify
+# 切换到非root用户
+USER user
 
-# 创建 VNC 用户并设置密码
-RUN useradd -m FrancisLiu && \
-    echo 'FrancisLiu:c23b1775954b7dbc5dbf9ca40f47e20a' | chpasswd && \
-    mkdir -p /home/FrancisLiu/.vnc && \
-    echo "c23b1775954b7dbc5dbf9ca40f47e20a" | vncpasswd -f > /home/FrancisLiu/.vnc/passwd && \
-    chown -R FrancisLiu:FrancisLiu /home/FrancisLiu && \
-    chmod 600 /home/FrancisLiu/.vnc/passwd
-
-# 将用户FrancisLiu添加到sudoers
-RUN echo 'FrancisLiu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# 配置 supervisord
-RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# 暴露端口
+# 暴露 Gotty 默认的端口
 EXPOSE 10000
 
-# 启动 supervisord
-CMD ["/usr/bin/supervisord"]
+# 启动 Gotty
+CMD ["gotty", "-w", "-p", "10000", "bash"]
