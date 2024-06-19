@@ -1,6 +1,9 @@
 # 使用官方的 Alpine Linux 镜像作为基础镜像
 FROM alpine:latest
 
+# 工作空间
+WORKDIR /
+
 # 安装必要的软件包
 RUN apk add --no-cache bash curl
 
