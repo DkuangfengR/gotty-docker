@@ -11,17 +11,8 @@ RUN curl -LO https://github.com/yudai/gotty/releases/download/v1.0.1/gotty_linux
     chmod +x /usr/local/bin/gotty && \
     rm gotty_linux_amd64.tar.gz
 
-# 创建一个新的用户
-RUN adduser -D -s /bin/bash user
-
-# 设置工作目录
-WORKDIR /home/user
-
-# 切换到非root用户
-USER user
-
 # 暴露 Gotty 默认的端口
-EXPOSE 8080
+EXPOSE 10000
 
 # 启动 Gotty
-CMD ["ls", "-al", "/usr/local/bin", "bash"]
+CMD ["gotty", "-w", "-p", "10000", "bash"]
